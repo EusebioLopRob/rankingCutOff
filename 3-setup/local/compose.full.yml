@@ -1,0 +1,102 @@
+#Docker compose version
+version: '3.9'
+
+#Services to be powered up
+services:
+
+  ###########################################
+  ############# BACKEND SERVICE #############
+  ###########################################
+  backend:
+    # Node image
+    image: "node:20.0.0-alpine"
+    user: "root"
+    restart: always
+    container_name: 'backend'
+    # working directory inside the container
+    working_dir: /home/backend
+    tty: true
+    # environment variables
+    environment:
+      - PROJECT_ACRONYM=bono
+      - NODE_ENV=development
+      - API_PORT=8091
+      - API_URL_BASE_PATH=/api
+      - TZ=Europe/Madrid
+      - MONGO_DB_URL=mongodb://mongodb:27017/bono?tls=false
+    # Source code is mounted into /home/backend inside the container
+    volumes:
+      - './../../2-backend/:/home/backend'
+    # Indicates TCP/IP ports accesible for the container services
+    # Expose for them to be available outside docker
+    expose:
+      - "8091"
+    # local posts are mapped for the hosting server
+    ports:
+      - '8091:8091'  
+    # the container belongs into a local network in order to stay visible for the rest of the containers 
+    networks:
+      - red-apps
+    # command for running the server
+    command: ash -c "npm install && npm run dev"
+
+  #########################################
+  ############# MONGO SERVICE #############
+  #########################################
+  mongodb:
+    # Mongo image
+    image: "mongo:6.0.5"
+    container_name: mongodb
+    # automatic restart
+    restart: always
+    environment:
+      - TZ=Europe/Madrid
+    expose:
+      - '27017'
+    # local posts are mapped for the hosting server
+    ports:
+      - '27017:27017'
+    # volume declaration in order to persist data when the container goes down 
+    volumes:
+      - mongodbvol:/data/db
+      - ./mongo/backup:/data/backup
+    # the container belongs into a local network in order to stay visible for the rest of the containers 
+    networks:
+       - red-apps
+       
+  ##########################################
+  ###############  WEBSERVER  ##############
+  ##########################################
+  # REVERSE PROXY - NGINX
+  ########################
+  nginx:
+    image: 'nginx:alpine'
+    container_name: 'nginx'
+    restart: always
+    tty: true
+    networks:
+      - red-apps
+    ports:
+      - '80:80'
+      - '443:443'
+    expose:
+      - "80"
+      - "443"
+    volumes:
+      #Configuracion NGINX (default.conf)
+      - './nginx/:/etc/nginx/conf.d'
+
+  #################################################################################################
+  #################################################################################################
+  #################################################################################################
+  #################################################################################################
+
+
+#network connector
+networks:
+  red-apps:
+    driver: bridge
+
+# persistency volumes
+volumes:
+  mongodbvol:
