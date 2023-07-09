@@ -130,4 +130,4 @@ dist
 .pnp.*
 
 # Package-lock NPM
-./package-lock.json
+package-lock.json
