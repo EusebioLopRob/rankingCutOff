@@ -4,7 +4,7 @@ module.exports = mongoose => {
       app: {
         
       },
-      // Indicar si el panel está isntalado
+      // Indicar si el panel está instalado
       installed: {
         type: Boolean,
         default: false
