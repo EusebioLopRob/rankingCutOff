@@ -1,2 +1,2 @@
-# rankingCutOff
-Kantai Collection Ranking Cut-off Tool by Savara
+# Bonodere
+Kantai Collection app by Savara
