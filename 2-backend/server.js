@@ -1,12 +1,17 @@
-// Imports
+///////////////////
+///// IMPORTS /////
+///////////////////
 const express = require("express");
 const bodyParser = require("body-parser");
 const cors = require("cors");
 const db = require("./app/models");
 const app = express();
 const seeder = require("./app/config/seeder/seeder");
+const { CronSenka, CronReports } = require("./cron");
 
-//environment variables
+///////////////////////
+///// ENVIRONMENT /////
+///////////////////////
 const basePath = process.env.API_URL_BASE_PATH;
 const PORT = process.env.API_PORT || 8081;
 
@@ -50,3 +55,8 @@ db.mongoose
     process.exit();
 });
 
+//////////////////////
+///// CRON TASKS /////
+//////////////////////
+//Request daya from senka.su every 15 minutes
+CronSenka.requestData('*/15 * * * *');

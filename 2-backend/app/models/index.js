@@ -9,7 +9,11 @@ db.url = dbConfig.dburl;
 db.user = require("./user.model.js")(mongoose);
 db.roles = require("./user.roles.model.js")(mongoose);
 
-//MODELS
+//MODELS FOR RANKING
+db.server = require("./server.model.js")(mongoose);
+db.rankingRecord = require("./ranking.record.model.js")(mongoose);
+db.player = require("./server.player.js")(mongoose);
+db.score = require("./server.score.js")(mongoose);
 
 
 //MODELS FOR ADMIN PANEL
